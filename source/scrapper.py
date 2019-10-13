@@ -60,6 +60,7 @@ def attempt(user, password):
         total_class = td[3].text.strip()
         percentage = td[4].text.strip()
         result[code] = {
+            'code' : code,
             'name' : subject,
             'attended': attended_class,
             'total': total_class,

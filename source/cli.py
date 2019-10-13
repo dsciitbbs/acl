@@ -3,6 +3,7 @@ import keyring
 import getpass
 from source.scrapper import attempt
 from tabulate import tabulate
+from source.missedClassScrapper import MissedClassDates
 
 @click.command()
 @click.option('-r', '--roll', prompt='Roll Number', help='Enter the Roll Number for ERP Login.')
@@ -27,10 +28,28 @@ def attendance(roll):
         saved_password = False
 
     # Fetch attendance from ERP and Pretty Print it on Terminal.
-    table = make_table(response)
-    print(tabulate(table, headers=["Subject Name", "Attended", "Percentage"],
-            tablefmt="fancy_grid"))
+    attendance_table = make_table(response)
+    attendance_header = ["Subject Code","Subject Name", "Attended","Percentage"]
+    show_table(attendance_table,attendance_header)
 
+    # Fetch missed classes from ERP and Pretty Print it on Terminal.
+    ans = input("Do you want to see the missed class(es) date-wise ? (y/N) ")
+    if ans=='y':
+        input_subject = []
+        specific_class_ans = input("Do you want to see the missed class(es) of specific subject(s)? (y/N) ")
+        if specific_class_ans=='y':
+            input_subject = [x for x in input("Enter the Subject code(s) seperated by spaces: ").split()]
+
+        print("please wait, it may take a while to fetch the information... \n")
+        missed_class_response = MissedClassDates(roll,password)
+        if specific_class_ans !='y':
+             missed_class_table = make_missed_class_table(missed_class_response)
+        else : 
+            missed_class_table = make_specific_sub_missed_class_table(missed_class_response,input_subject)
+        Missed_class_headers =  ["Date","Subject Name", "Attended"]
+        show_table(missed_class_table,Missed_class_headers)
+
+        
     # Store password locally if not saved already
     if not saved_password:
         ans = input("Do you want to store your password locally? (y/N) ")
@@ -39,14 +58,15 @@ def attendance(roll):
 
 
 def make_table(response):
-    result = list()
-    for (code, data) in response.items():
-        row = list()
-        row.append(data['name'])
-        row.append(data['attended'] + '/' + data['total'])
-        row.append(data['percentage'])
-        result.append(row)
+    result = [[data['code'], data['name'], data['attended'] + '/' + data['total'],data['percentage']] for (code, data) in response.items()]
+    return result
 
+def make_missed_class_table(response):
+    result  = [[data['Date'], data['subjectName'], data['attended'] + '/' + data['total']] for (Date, data) in response.items()]  
+    return result
+
+def make_specific_sub_missed_class_table(response,valid_subjectC_code):
+    result = [[data['Date'], data['subjectName'], data['attended'] + '/' + data['total']] for (Date, data) in response.items() if(data['code'] in valid_subjectC_code)]
     return result
 
 def ResponseAttempt(roll, password):
@@ -68,6 +88,11 @@ def ResponseAttempt(roll, password):
         exit(0)
 
     return response,password
+
+
+def show_table(table,table_headers):
+    print(tabulate(table, headers=table_headers,tablefmt="fancy_grid"))
+
 
 
 
