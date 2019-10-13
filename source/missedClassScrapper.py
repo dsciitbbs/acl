@@ -7,7 +7,7 @@ import datetime
 from tabulate import tabulate
 
 
-def MissedClassDates(user, password):
+def MissedClassDates(user, password, start = "2019-07-19"):
     
     url = 'http://erp.iitbbs.ac.in'
     browser = RoboBrowser(history=False, parser='html.parser')
@@ -50,7 +50,7 @@ def MissedClassDates(user, password):
 
     today = datetime.date.today() 
 
-    start_date = "2019-07-19" #start of semester 
+    start_date = start #start of semester 
     end_date = today.strftime("%Y-%m-%d")
     st = RangeOfDate(start_date,end_date)
 
@@ -58,8 +58,12 @@ def MissedClassDates(user, password):
 
 
 def RangeOfDate(startDate,EndDate):
+
+    startDate = startDate.strip()
     start = datetime.datetime.strptime(startDate, "%Y-%m-%d")
     end = datetime.datetime.strptime(EndDate, "%Y-%m-%d")
+    if start >= end:
+        return list()
     date_generated = [start + datetime.timedelta(days=x) for x in range(0, (end-start).days+1) if (start + datetime.timedelta(days=x)).weekday() != 6]
     DateRange = [date.strftime("%Y-%m-%d") for date in date_generated]
     return DateRange

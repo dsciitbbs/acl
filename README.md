@@ -1,7 +1,7 @@
 # ACL - Attendance on Command Line
 > *Fetch attendance from ERP and Pretty Print it on Terminal.*
 
-[![Build Status](https://travis-ci.com/apsknight/acl.svg?branch=master)](https://travis-ci.com/apsknight/acl)
+[![Build Status](https://travis-ci.com/dsciitbbs/acl.svg?branch=master)](https://travis-ci.com/dsciitbbs/acl)
 
 [![asciicast](https://asciinema.org/a/nBapjGfxqwNxgQHXfYn6N6TpH.svg)](https://asciinema.org/a/nBapjGfxqwNxgQHXfYn6N6TpH)
 
