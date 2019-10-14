@@ -6,6 +6,8 @@ import sys
 from source.scrapper import attempt
 from tabulate import tabulate
 from source.missedClassScrapper import MissedClassDates
+from os.path import expanduser
+import platform
 
 @click.command()
 @click.option('-r', '--roll', prompt='Roll Number', help='Enter the Roll Number for ERP Login.')
@@ -46,7 +48,7 @@ def attendance(roll):
         cached_yes = False
 
         try:
-            with open(sys.exec_prefix + "\\attendance_past.txt", "r") as f:
+            with open(getFilePath(), "r") as f:
                 attendance = [line.split("\t") for line in f]
             cached_yes = input("Unless your past attendance was updated recently, would you like us to use cached data? (y/N) ")
         except Exception:
@@ -72,6 +74,13 @@ def attendance(roll):
         if ans=='y':
             keyring.set_password('ERP', roll, password)
 
+def getFilePath():
+    # return expanduser("~/.attendance_past.txt")
+    # print(platform.system())
+    if platform.system() == 'Windows':
+        return sys.exec_prefix + "\\attendance_past.txt"
+    else:
+        return expanduser("~/.attendance_past.txt")
 
 def make_table(response):
     result = [[data['code'], data['name'], data['attended'] + '/' + data['total'],data['percentage']] for (code, data) in response.items()]
@@ -86,7 +95,7 @@ def make_missed_class_table(response, attendance, cached_yes):
 
     today = datetime.date.today()
 
-    with open(sys.exec_prefix + "\\attendance_past.txt", "w") as f:
+    with open(getFilePath(), "w") as f:
         f.write(today.strftime("%Y-%m-%d") + "\n")
         for results in result:
             f.write(str(results[0]).strip() + "\t" + str(results[1]).strip() + "\t" + str(results[2]).strip() + "\t" + str(results[3]).strip() + "\n")
