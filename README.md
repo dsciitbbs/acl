@@ -52,6 +52,8 @@ Password:
 ## Contributors
 - Aman Pratap Singh
 - Tummala Madhav
+- Aditya Pal
+- Rahul Kumar
 
 ## License
 MIT © [Aman Pratap Singh](https://aps.mit-license.org)
