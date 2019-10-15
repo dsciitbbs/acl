@@ -3,9 +3,15 @@ import keyring
 import getpass
 import datetime
 import sys
+import os
 from source.scrapper import attempt
 from tabulate import tabulate
 from source.missedClassScrapper import MissedClassDates
+
+try:
+    import win32con, win32api
+except ImportError:
+    pass
 
 @click.command()
 @click.option('-r', '--roll', prompt='Roll Number', help='Enter the Roll Number for ERP Login.')
@@ -46,7 +52,7 @@ def attendance(roll):
         cached_yes = False
 
         try:
-            with open(sys.exec_prefix + "\\attendance_past.txt", "r") as f:
+            with open(os.path.expanduser("~/.attendance_past.txt"), "r") as f:
                 attendance = [line.split("\t") for line in f]
             cached_yes = input("Unless your past attendance was updated recently, would you like us to use cached data? (y/N) ")
         except Exception:
@@ -85,11 +91,22 @@ def make_missed_class_table(response, attendance, cached_yes):
         result.append([data['code'], data['Date'], data['subjectName'], data['attended'] + '/' + data['total']]) 
 
     today = datetime.date.today()
+    file = os.path.expanduser("~/.attendance_past.txt")
 
-    with open(sys.exec_prefix + "\\attendance_past.txt", "w") as f:
+    try:
+        win32api.SetFileAttributes(file, win32con.FILE_ATTRIBUTE_NORMAL)
+    except Exception:
+        pass
+
+    with open(file, "w") as f:
         f.write(today.strftime("%Y-%m-%d") + "\n")
         for results in result:
             f.write(str(results[0]).strip() + "\t" + str(results[1]).strip() + "\t" + str(results[2]).strip() + "\t" + str(results[3]).strip() + "\n")
+
+    try:
+        win32api.SetFileAttributes(file, win32con.FILE_ATTRIBUTE_HIDDEN)
+    except Exception:
+        pass
 
     return result
 
