@@ -98,10 +98,13 @@ def make_missed_class_table(response, attendance, cached_yes):
     except Exception:
         pass
 
-    with open(file, "w") as f:
-        f.write(today.strftime("%Y-%m-%d") + "\n")
-        for results in result:
-            f.write(str(results[0]).strip() + "\t" + str(results[1]).strip() + "\t" + str(results[2]).strip() + "\t" + str(results[3]).strip() + "\n")
+    try:
+        with open(file, "w") as f:
+            f.write(today.strftime("%Y-%m-%d") + "\n")
+            for results in result:
+                f.write(str(results[0]).strip() + "\t" + str(results[1]).strip() + "\t" + str(results[2]).strip() + "\t" + str(results[3]).strip() + "\n")
+    except Exception:
+        pass
 
     try:
         win32api.SetFileAttributes(file, win32con.FILE_ATTRIBUTE_HIDDEN)
