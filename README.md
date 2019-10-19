@@ -54,6 +54,7 @@ Password:
 - Tummala Madhav
 - Aditya Pal
 - Rahul Kumar
+- Kaustav Bhattacharya
 
 ## License
 MIT © [Aman Pratap Singh](https://aps.mit-license.org)
