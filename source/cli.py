@@ -87,8 +87,10 @@ def make_missed_class_table(response, attendance, cached_yes):
     result = []
     if attendance is not None and cached_yes == 'y':
         result = [attendance[i] for i in range (1, len(attendance))]
-    for (Date, data) in response.items():
-        result.append([data['code'], data['Date'], data['subjectName'], data['attended'] + '/' + data['total']]) 
+    for (Date, all_data) in response.items():       
+        for data in all_data:
+            if data is not None:
+                result.append([data['code'], data['Date'], data['subjectName'], data['attended'] + '/' + data['total']]) 
 
     today = datetime.date.today()
     file = os.path.expanduser("~/.attendance_past.txt")
@@ -117,9 +119,10 @@ def make_specific_sub_missed_class_table(response,valid_subjectC_code, attendanc
     result = []
     if attendance is not None and cached_yes == 'y':
         result = [attendance[i] for i in range (1, len(attendance)) if attendance[i][0] in valid_subjectC_code]
-    for (Date, data) in response.items():
-        if data['code'] in valid_subjectC_code:
-            result.append([data['code'], data['Date'], data['subjectName'], data['attended'] + '/' + data['total']])
+    for (Date, all_data) in response.items():
+        for data in all_data:
+            if data is not None and data['code'] in valid_subjectC_code:
+                result.append([data['code'], data['Date'], data['subjectName'], data['attended'] + '/' + data['total']])
     return result
 
 def ResponseAttempt(roll, password):
