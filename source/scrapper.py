@@ -8,9 +8,7 @@ def NetworkErrorClick():
     click.echo(click.style('Network error, please check your internet connection and firewall for URL: http://erp.iitbbs.ac.in', fg='red', bold=True))
     exit(0)
 
-
-def attempt(user, password):
-    url = 'http://erp.iitbbs.ac.in'
+def network(user, password, url = 'http://erp.iitbbs.ac.in'):
     browser = RoboBrowser(history=False, parser='html.parser')
     try:
         browser.open(url)
@@ -36,20 +34,28 @@ def attempt(user, password):
         NetworkErrorClick()
 
     if (browser.url != 'http://erp.iitbbs.ac.in/home.php'):
-        return False
+        return None
 
     attendance_link = 'http://erp.iitbbs.ac.in/biometric/list_students.php'
 
     try:
         browser.open(attendance_link)
+        return browser.response.text
     except:
         NetworkErrorClick()
 
-    soup = BeautifulSoup(browser.response.text, 'html.parser')
+
+def attempt(user, password):
+    
+    text = network(user, password)
+    if text is None:
+        return False
+
+    soup = BeautifulSoup(text, 'html.parser')
     content = soup.find('div', attrs={'id': 'content'})
     table = content.find('table')
-
     tr = table.find_all('tr')
+
     result = dict()
 
     for row in tr[1:]: # Don't need headers

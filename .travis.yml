@@ -7,3 +7,6 @@ install:
   - pip install -e .
 script:
   - acl --help
+  - coverage run -m pytest
+after_success:
+  - codecov
