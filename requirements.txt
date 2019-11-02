@@ -15,5 +15,4 @@ keyring==17.1.1
 datetime==4.3
 mockito==1.1.1
 pytest==5.1.2
-pytest-cov==2.0.15
 codecov
